@@ -40,12 +40,10 @@ const Home = ({ navigation }) => {
   };
 
   const ProductCard = ({ data }) => {
-
-    console.log('Products Cart', data);
     return (
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate("ProductoInfo", { item: data })
+          navigation.navigate("ProductoInfo", { productID: data.id })
         }
         style={{ width: "48%", marginVertical: 14 }}
       >
@@ -89,11 +87,11 @@ const Home = ({ navigation }) => {
             </View>
           ) : null}
           <Image
-            source={data.productImage}
+            source={{ uri: data.productImage }}
             style={{
               width: "80%",
               height: "80%",
-              resizeMode: "contain",
+              resizeMode: "contain"
             }}
           />
         </View>
@@ -300,7 +298,7 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: 'center',
     justifyContent: 'center',
-    right: 30,
+    right: 20,
     bottom: 30,
     borderRadius: 10
   },
