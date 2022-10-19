@@ -10,7 +10,6 @@ const ProductoInfo = ({ route, navigation }) => {
   const scrollX = new Animated.Value(0);
   let position = Animated.divide(scrollX, width);
 
-  console.log('THIS IS THE PRODUCT => ', product);
   useEffect(() => {
     const unSubscribe = navigation.addListener('focus', () => {
       getDataFromDB();
@@ -20,7 +19,7 @@ const ProductoInfo = ({ route, navigation }) => {
 
   const getDataFromDB = async () => {
     for (let index = 0; index < Items.length; index++) {
-      if (Items[index].id === productID) {
+      if (Items[index].id == productID) {
         await setProduct(Items[index]);
         return
       }
@@ -28,14 +27,14 @@ const ProductoInfo = ({ route, navigation }) => {
   }
 
 
-  const addToCard = async id => {
+
+  const addToCard = async (id) => {
     let itemArray = await AsyncStorage.getItem('cartItems');
     itemArray = JSON.parse(itemArray);
 
     if (itemArray) {
       let array = itemArray;
       array.push(id);
-
       try {
         await AsyncStorage.setItem('cartItems', JSON.stringify(array));
         ToastAndroid.show(
@@ -95,7 +94,7 @@ const ProductoInfo = ({ route, navigation }) => {
             )}
           /> */}
 
-          <View style={{ width: width, height: 240, alignItems: 'center', justifyContent: 'center',  marginBottom: 15 }}>
+          <View style={{ width: width, height: 240, alignItems: 'center', justifyContent: 'center', marginBottom: 15 }}>
             <Image source={{ uri: product.productImage }} style={{ width: '100%', height: '100%', resizeMode: 'contain' }} />
           </View>
           {/* <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 16, marginTop: 32 }}>
@@ -132,6 +131,7 @@ const ProductoInfo = ({ route, navigation }) => {
           </View>
           <Text style={{ fontSize: 13, color: '#000', fontWeight: '400', letterSpacing: 1, opacity: 0.5, lineHeight: 20, marginBottom: 18, textAlign: 'justify' }}>{product.description}</Text>
           <Text style={{ fontSize: 18, fontWeight: 'bold', maxWidth: '95%', color: '#000', marginBottom: 10 }}>Precio del Producto: ${product.price}</Text>
+          <Text style={{ fontSize: 18, fontWeight: 'bold', maxWidth: '95%', color: '#000', marginBottom: 10 }}>Disponibles en Stock: {product.stock}</Text>
           {/* <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 14, borderBottomColor: COLORS.BACKGROUNDLIGHT, borderBottomWidth: 1, paddingBottom: 20 }}>
             <View style={{ flexDirection: 'row', width: '80%', alignItems: 'center' }}>
               <View style={{ color: COLORS.BLUE, backgroundColor: COLORS.BACKGROUNDLIGHT, alignItems: 'center', justifyContent: 'center', padding: 12, borderRadius: 100, marginRight: 10 }}>

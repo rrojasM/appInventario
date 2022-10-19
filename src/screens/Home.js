@@ -9,35 +9,49 @@ import {
   StyleSheet
 } from "react-native";
 import { COLORS, Items } from "../data/Index";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Home = ({ navigation }) => {
   const [products, setProducts] = useState([]);
-  const [bebidas, setBebidas] = useState([]);
+
+  /* useEffect(() => {
+    const unSubscribe = navigation.addListener("focus", () => {
+      getData();
+      //getDataFromData();
+    });
+    return unSubscribe;
+  }, [navigation]); */
 
   useEffect(() => {
-    const unSubscribe = navigation.addListener("focus", () => {
-      getDataFromData();
-    });
-
-    return unSubscribe;
-  }, [navigation]);
-
-  const getDataFromData = () => {
-    let productList = [];
-    let bebidasList = [];
-
-    for (let index = 0; index < Items.length; index++) {
-      if (Items[index].category == "product") {
-        productList.push(Items[index]);
-      } else if (Items[index].category == "bebidas") {
-        bebidasList.push(Items[index]);
+    getData();
+  }, [])
+  
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('database');
+      if (value !== null) {
+        console.log('GET DATA ', JSON.parse(value));
+        setProducts(JSON.parse(value));
       }
-    }
 
-    setProducts(productList);
-    setBebidas(bebidasList);
-  };
+    } catch (e) {
+      console.log('Error', e);
+    }
+  }
+
+  /*  const getDataFromData = async () => {
+     let productList = [];
+     let bebidasList = [];
+ 
+     for (let index = 0; index < Items.length; index++) {
+       if (Items[index].category == "product") {
+         productList.push(Items[index]);
+       } else if (Items[index].category == "bebidas") {
+         bebidasList.push(Items[index]);
+       }
+     }
+     setProducts(productList);
+   }; */
 
   const ProductCard = ({ data }) => {
     return (
@@ -59,7 +73,7 @@ const Home = ({ navigation }) => {
             marginBottom: 8,
           }}
         >
-          {data.isOff ? (
+          {/*  {data.isOff ? (
             <View
               style={{
                 position: "absolute",
@@ -85,7 +99,7 @@ const Home = ({ navigation }) => {
                 {data.offPercentage}%
               </Text>
             </View>
-          ) : null}
+          ) : null} */}
           <Image
             source={{ uri: data.productImage }}
             style={{
