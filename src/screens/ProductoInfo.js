@@ -10,21 +10,31 @@ const ProductoInfo = ({ route, navigation }) => {
   const scrollX = new Animated.Value(0);
   let position = Animated.divide(scrollX, width);
 
-  useEffect(() => {
+ /*  useEffect(() => {
     const unSubscribe = navigation.addListener('focus', () => {
       getDataFromDB();
     });
     return unSubscribe;
-  }, [navigation]);
+  }, [navigation]); */
 
-  const getDataFromDB = async () => {
+/*   const getDataFromDB = async () => {
     for (let index = 0; index < Items.length; index++) {
-      if (Items[index].id == productID) {
+      if (Items[index].id === productID) {
         await setProduct(Items[index]);
         return
       }
     }
   }
+ */
+
+  useEffect(() => {
+    console.log('====================================');
+    console.log(productID);
+    console.log('====================================');
+    setProduct(productID)
+  }, [])
+  
+
 
 
 
@@ -142,12 +152,15 @@ const ProductoInfo = ({ route, navigation }) => {
         </View>
       </ScrollView>
       <View style={{ position: 'absolute', bottom: 10, height: '8%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-        <TouchableOpacity onPress={() => (product.isAvailable ? addToCard(product.id) : null)} style={{ width: '86%', height: '80%', backgroundColor: COLORS.GREEN, borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
+        {/* <TouchableOpacity onPress={() => (product.isAvailable ? addToCard(product.id) : null)} style={{ width: '86%', height: '80%', backgroundColor: COLORS.GREEN, borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
           <Text style={{ fontSize: 12, fontWeight: '500', letterSpacing: 1, color: '#FFF', textTransform: 'uppercase' }}>{product.isAvailable ? "Agregar al Carrito" : "No disponible"}</Text>
+        </TouchableOpacity> */}
+        <TouchableOpacity onPress={() => (product.isAvailable ? addToCard(product.id) : null)} style={{ width: '86%', height: '80%', backgroundColor: COLORS.GREEN, borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ fontSize: 12, fontWeight: '500', letterSpacing: 1, color: '#FFF', textTransform: 'uppercase' }}>{product.available ? "Agregar al Carrito" : "No disponible"}</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
 
-export default ProductoInfo;
+export default React.memo(ProductoInfo);

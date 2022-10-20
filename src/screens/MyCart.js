@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ToastAndroid, ScrollView, TouchableOpacity, Image, TouchableHighlight } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS, Items } from '../data/Index';
+import uuid from 'react-uuid';
 
 const MyCart = ({ navigation }) => {
 
@@ -99,7 +100,7 @@ const MyCart = ({ navigation }) => {
     return (
       <>
         <View
-          key={Math.random()}
+          key={uuid()}
           style={{
             width: '100%',
             height: 100,
@@ -351,4 +352,4 @@ const MyCart = ({ navigation }) => {
   )
 }
 
-export default MyCart;
+export default React.memo(MyCart);

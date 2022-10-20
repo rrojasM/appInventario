@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Items } from './src/data/Index';
 
 import { openDatabase } from 'react-native-sqlite-storage';
+import Inventario from './src/screens/Inventario';
 
 const db = openDatabase({
   name: "db_products"
@@ -31,18 +32,19 @@ const App = () => {
       console.log('Error', e);
     }
   }
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name='Home' component={Home} />
         <Stack.Screen name='MyCart' component={MyCart} />
         <Stack.Screen name='ProductoInfo' component={ProductoInfo} />
-
+        <Stack.Screen name='Inventario' component={Inventario} />
       </Stack.Navigator>
     </NavigationContainer>
   )
 }
 
-export default App;
+export default React.memo(App);
 
 const styles = StyleSheet.create({})

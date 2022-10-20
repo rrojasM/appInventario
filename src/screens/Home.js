@@ -6,13 +6,16 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-  StyleSheet
+  StyleSheet,
+  Modal
 } from "react-native";
 import { COLORS, Items } from "../data/Index";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import FormularioInventario from "../components/FormularioInventario";
 
 const Home = ({ navigation }) => {
   const [products, setProducts] = useState([]);
+  const [modal, setModal] = useState(false);
 
   /* useEffect(() => {
     const unSubscribe = navigation.addListener("focus", () => {
@@ -22,22 +25,36 @@ const Home = ({ navigation }) => {
     return unSubscribe;
   }, [navigation]); */
 
-  useEffect(() => {
+  /* useEffect(() => {
     getData();
-  }, [])
-  
-  const getData = async () => {
+    getData2();
+  }, []) */
+
+  /* const getData = async () => {
     try {
       const value = await AsyncStorage.getItem('database');
       if (value !== null) {
-        console.log('GET DATA ', JSON.parse(value));
+        console.log('GET DATA =====> ', JSON.parse(value));
         setProducts(JSON.parse(value));
       }
 
     } catch (e) {
-      console.log('Error', e);
+      console.log('ERROR', e);
     }
   }
+
+  const getData2 = async () => {
+    try {
+      const value = await AsyncStorage.getItem('newData');
+      if (value !== null) {
+        console.log('GET DATA 2 =====> ', JSON.parse(value));
+        //setProducts(JSON.parse(value));
+      }
+
+    } catch (e) {
+      console.log('ERROR', e);
+    }
+  } */
 
   /*  const getDataFromData = async () => {
      let productList = [];
@@ -53,11 +70,24 @@ const Home = ({ navigation }) => {
      setProducts(productList);
    }; */
 
+
+   useEffect(() => {
+    fetchDataInventario();
+   }, [])
+   
+
+
+  const fetchDataInventario = () => {
+    fetch('https://4d74-2806-262-401-9631-7085-b7eb-af28-f022.ngrok.io/api/inventario')
+      .then(response => response.json())
+      .then(data => setProducts(data))
+  }
+
   const ProductCard = ({ data }) => {
     return (
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate("ProductoInfo", { productID: data.id })
+          navigation.navigate("ProductoInfo", { productID: data })
         }
         style={{ width: "48%", marginVertical: 14 }}
       >
@@ -168,9 +198,9 @@ const Home = ({ navigation }) => {
             backgroundColor: COLORS.GREEN,
           }}
         >
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Inventario")}>
             <Image
-              source={require("../assets/bolso-de-la-tienda.png")}
+              source={require("../assets/inventario.png")}
               style={{
                 width: 35,
                 height: 35,
@@ -289,9 +319,26 @@ const Home = ({ navigation }) => {
                 </View> */}
       </ScrollView>
 
+      {
+        modal && (
+          <Modal
+            animationType="slide"
+            visible={modal}
+            onRequestClose={() => {
+              setModal(!modal);
+            }}
+          >
+            <FormularioInventario
+              setModal={setModal}
+            />
+          </Modal>
+        )
+      }
+
       <TouchableOpacity
         activeOpacity={0.7}
         style={styles.touchableOpacity}
+        onPress={() => setModal(!modal)}
       >
         <Image
           style={styles.floatImage}
@@ -302,7 +349,7 @@ const Home = ({ navigation }) => {
   );
 };
 
-export default Home;
+export default React.memo(Home);
 
 
 const styles = StyleSheet.create({
