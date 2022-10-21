@@ -9,79 +9,27 @@ import {
   StyleSheet,
   Modal
 } from "react-native";
-import { COLORS, Items } from "../data/Index";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { COLORS } from "../data/Index";
 import FormularioInventario from "../components/FormularioInventario";
 
 const Home = ({ navigation }) => {
   const [products, setProducts] = useState([]);
   const [modal, setModal] = useState(false);
 
-  /* useEffect(() => {
-    const unSubscribe = navigation.addListener("focus", () => {
-      getData();
-      //getDataFromData();
-    });
-    return unSubscribe;
-  }, [navigation]); */
+  useEffect(() => {
+    (async () => {
+      const data = await fetchDataInventario();
+    })()
 
-  /* useEffect(() => {
-    getData();
-    getData2();
-  }, []) */
-
-  /* const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('database');
-      if (value !== null) {
-        console.log('GET DATA =====> ', JSON.parse(value));
-        setProducts(JSON.parse(value));
-      }
-
-    } catch (e) {
-      console.log('ERROR', e);
-    }
-  }
-
-  const getData2 = async () => {
-    try {
-      const value = await AsyncStorage.getItem('newData');
-      if (value !== null) {
-        console.log('GET DATA 2 =====> ', JSON.parse(value));
-        //setProducts(JSON.parse(value));
-      }
-
-    } catch (e) {
-      console.log('ERROR', e);
-    }
-  } */
-
-  /*  const getDataFromData = async () => {
-     let productList = [];
-     let bebidasList = [];
- 
-     for (let index = 0; index < Items.length; index++) {
-       if (Items[index].category == "product") {
-         productList.push(Items[index]);
-       } else if (Items[index].category == "bebidas") {
-         bebidasList.push(Items[index]);
-       }
-     }
-     setProducts(productList);
-   }; */
-
-
-   useEffect(() => {
-    fetchDataInventario();
-   }, [])
-   
-
+  }, [])
 
   const fetchDataInventario = () => {
-    fetch('https://4d74-2806-262-401-9631-7085-b7eb-af28-f022.ngrok.io/api/inventario')
+    fetch('https://b1b6-2806-262-401-9631-7085-b7eb-af28-f022.ngrok.io/api/inventario')
       .then(response => response.json())
       .then(data => setProducts(data))
   }
+
+
 
   const ProductCard = ({ data }) => {
     return (
@@ -103,33 +51,7 @@ const Home = ({ navigation }) => {
             marginBottom: 8,
           }}
         >
-          {/*  {data.isOff ? (
-            <View
-              style={{
-                position: "absolute",
-                width: "20%",
-                height: "24%",
-                backgroundColor: COLORS.GREEN,
-                top: 0,
-                left: 0,
-                borderTopLeftRadius: 10,
-                borderBottomRightRadius: 10,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: COLORS.WHITE,
-                  fontWeight: "bold",
-                  letterSpacing: 1,
-                }}
-              >
-                {data.offPercentage}%
-              </Text>
-            </View>
-          ) : null} */}
+
           <Image
             source={{ uri: data.productImage }}
             style={{
@@ -198,7 +120,7 @@ const Home = ({ navigation }) => {
             backgroundColor: COLORS.GREEN,
           }}
         >
-          <TouchableOpacity onPress={() => navigation.navigate("Inventario")}>
+          <TouchableOpacity onPress={() => navigation.navigate("Inventario", { data: products[0] })}>
             <Image
               source={require("../assets/inventario.png")}
               style={{
@@ -210,7 +132,7 @@ const Home = ({ navigation }) => {
               }}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("MyCart")}>
+          {/*  <TouchableOpacity onPress={() => navigation.navigate("MyCart")}>
             <Image
               source={require("../assets/carrito-de-compras.png")}
               style={{
@@ -221,7 +143,7 @@ const Home = ({ navigation }) => {
                 color: COLORS.GREEN,
               }}
             />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         <View
           style={{
@@ -284,11 +206,11 @@ const Home = ({ navigation }) => {
                 {products.length}
               </Text>
             </View>
-            <Text
-              style={{ fontSize: 14, color: COLORS.BLUE, fontWeight: "400" }}
-            >
-              Ver Todos
-            </Text>
+            <TouchableOpacity onPress={fetchDataInventario}>
+              <Text style={{ fontSize: 14, color: COLORS.BLUE, fontWeight: "400" }}>
+                Actualizar Productos
+              </Text>
+            </TouchableOpacity>
           </View>
           <View
             style={{
@@ -302,21 +224,6 @@ const Home = ({ navigation }) => {
             })}
           </View>
         </View>
-
-
-        {/* <View style={{ padding: 16 }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Text style={{ fontSize: 18, color: '#000', fontWeight: '500', letterSpacing: 1 }}>Bebidas</Text>
-                            <Text style={{ fontSize: 14, color: '#000', fontWeight: '400', opacity: 0.5, marginLeft: 10 }}>{products.length}</Text>
-                        </View>
-                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-around' }}>
-                            {bebidas.map(data => {
-                                return <ProductCard data={data} key={data.id} />
-                            })}
-                        </View>
-                    </View>
-                </View> */}
       </ScrollView>
 
       {

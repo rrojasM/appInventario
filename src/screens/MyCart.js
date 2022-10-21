@@ -4,86 +4,24 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS, Items } from '../data/Index';
 import uuid from 'react-uuid';
 
-const MyCart = ({ navigation }) => {
+const MyCart = ({ navigation, route }) => {
 
-  const [product, setProduct] = useState();
   const [total, setTotal] = useState();
-  const [changeNumber, setChangeNumber] = useState(1)
-
-  /*  useEffect(() => {
-     const unSubscribe = navigation.addListener('focus', () => {
-       getDataFromDB();
-     });
- 
-     return unSubscribe;
-   }, [navigation]);
-  */
+  const [changeNumber, setChangeNumber] = useState(1);
+  const { productId } = route.params;
 
   useEffect(() => {
-    getDataFromDB();
-  }, []);
+    const unSubscribe = navigation.addListener('focus', () => {
+      getDataFromDB();
+    });
 
-  const getDataFromDB = async () => {
-    let items = await AsyncStorage.getItem('cartItems');
-    items = JSON.parse(items);
+    return unSubscribe;
+  }, [navigation]);
 
-    let productData = [];
-
-    if (items) {
-      Items.forEach(data => {
-        if (items.includes(data?.id)) {
-
-          return productData.push(data);
-        }
-      });
-      console.log('PRODUCT DATA =====> ', productData);
-      setProduct(productData);
-      getTotal(productData);
-    } else {
-      //setProduct(false);
-      //getTotal(false);
-    }
+  const getDataFromDB = () => {
   }
-
-  const getTotal = (productData) => {
-    console.log('ProductDATA ', productData);
-    console.log('ProductDATA ', productData.length);
-
-    let total = 0;
-    for (let index = 0; productData.length; index++) {
-      let productPriceTotal = productData[index].price;
-      total = total += productPriceTotal;
-      alert('TOTAL INSIDE FOR: ', total);
-    }
-    //alert('TOTAL OUTSIDE FOR: ', total);
-    setTotal(total);
-  }
-
-  const removeItemFromCart = async id => {
-    let itemArray = await AsyncStorage.getItem('cartItems');
-    itemArray = JSON.parse(itemArray);
-
-    if (itemArray) {
-      let array = itemArray;
-      for (let index = 0; index < array.length; index++) {
-        if (array[index] === id) {
-          array.splice(index, 1);
-        }
-
-        await AsyncStorage.setItem('cartItems', JSON.stringify(array));
-        getDataFromDB();
-      }
-    }
-  };
-
 
   const checkOut = async () => {
-    try {
-      await AsyncStorage.removeItem('cartItems');
-    } catch (error) {
-      return error;
-    }
-
     ToastAndroid.show('Venta Realizada...', ToastAndroid.SHORT);
     navigation.navigate('Home');
   }
@@ -94,128 +32,16 @@ const MyCart = ({ navigation }) => {
 
   const decrement = () => {
     setChangeNumber(changeNumber => changeNumber - 1);
+    validateCouter();
   }
 
-  const renderProducts = (data, index) => {
-    return (
-      <>
-        <View
-          key={uuid()}
-          style={{
-            width: '100%',
-            height: 100,
-            marginVertical: 6,
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
-          <TouchableOpacity
-            style={{
-              width: '30%',
-              height: 100,
-              padding: 14,
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: COLORS.BACKGROUNDLIGHT,
-              borderRadius: 10,
-              marginRight: 22,
-            }} onPress={() => navigation.navigate('ProductoInfo', { productID: data?.id })}>
-            <Image
-              source={{ uri: data?.productImage }}
-              style={{
-                width: '100%',
-                height: '100%',
-                resizeMode: 'contain',
-              }}
-            />
-          </TouchableOpacity>
-          <View
-            style={{
-              flex: 1,
-              height: '100%',
-              justifyContent: 'space-around',
-            }}>
-            <View style={{}}>
-              <Text
-                style={{
-                  fontSize: 13,
-                  maxWidth: '100%',
-                  color: COLORS.BLACK,
-                  fontWeight: '600',
-                  letterSpacing: 1,
-                }}>
-                {data?.productName}
-              </Text>
-              <View
-                style={{
-                  marginTop: 4,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  opacity: 0.6,
-                }}>
-                <Text
-                  style={{
-                    fontSize: 12,
-                    fontWeight: '400',
-                    maxWidth: '85%',
-                    marginRight: 4,
-                  }}>
-                  $ {data?.price}
-                </Text>
-              </View>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}>
-                <View
-                  style={{
-                    borderRadius: 100,
-                    marginRight: 20,
-                    padding: 4,
-                    borderWidth: 1,
-                    borderColor: COLORS.BACKGROUNDMEDIUM,
-                    opacity: 0.5,
-                  }}>
-                  <TouchableOpacity onPress={decrement}>
-                    {/* <Image style={{ width: 10, height: 10, padding: 12 }} source={require('../assets/minus.png')} /> */}
-                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#000' }}>-</Text>
-                  </TouchableOpacity>
-                </View>
-                <Text>{changeNumber}</Text>
-                <View
-                  style={{
-                    borderRadius: 100,
-                    marginLeft: 20,
-                    padding: 4,
-                    borderWidth: 1,
-                    borderColor: COLORS.BACKGROUNDMEDIUM,
-                    opacity: 0.5,
-                  }}>
-                  <TouchableOpacity onPress={increment}>
-                    {/* <Image style={{ width: 10, height: 10, padding: 12 }} source={require('../assets/plus.png')} /> */}
-                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#000' }}>+</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <TouchableOpacity onPress={() => removeItemFromCart(data)}>
-                <Image
-                  style={{ width: 10, height: 10, padding: 12 }}
-                  source={require('../assets/eliminar.png')}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </>
-    );
-  };
+  const validateCouter = () => {
+    if (changeNumber === 0) {
+      alert('No se permiten agregar valores negativos o valores en 0')
+    } else if (changeNumber <= 0) {
+      alert('No se permiten agregar valores negativos o valores en 0')
+    }
+  }
 
   return (
     <View
@@ -266,11 +92,120 @@ const MyCart = ({ navigation }) => {
           Mi Carrito
         </Text>
         <View style={{ paddingHorizontal: 16 }}>
-          {product ? product.map(renderProducts) : null}
+          <View
+            style={{
+              width: '100%',
+              height: 100,
+              marginVertical: 6,
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <TouchableOpacity
+              style={{
+                width: '30%',
+                height: 100,
+                padding: 14,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: COLORS.BACKGROUNDLIGHT,
+                borderRadius: 10,
+                marginRight: 22,
+              }} onPress={() => navigation.navigate('ProductoInfo', { productID: productId.id })}>
+              <Image
+                source={{ uri: productId.productImage }}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  resizeMode: 'contain',
+                }}
+              />
+            </TouchableOpacity>
+            <View
+              style={{
+                flex: 1,
+                height: '100%',
+                justifyContent: 'space-around',
+              }}>
+              <View style={{}}>
+                <Text
+                  style={{
+                    fontSize: 13,
+                    maxWidth: '100%',
+                    color: COLORS.BLACK,
+                    fontWeight: '600',
+                    letterSpacing: 1,
+                  }}>
+                  {productId.productName}
+                </Text>
+                <View
+                  style={{
+                    marginTop: 4,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    opacity: 0.6,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      fontWeight: '400',
+                      maxWidth: '85%',
+                      marginRight: 4,
+                    }}>
+                    $ {productId.price}
+                  </Text>
+                </View>
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                  <View
+                    style={{
+                      borderRadius: 100,
+                      marginRight: 20,
+                      padding: 4,
+                      borderWidth: 1,
+                      borderColor: COLORS.BACKGROUNDMEDIUM,
+                      opacity: 0.5,
+                    }}>
+                    <TouchableOpacity onPress={decrement}>
+                      {/* <Image style={{ width: 10, height: 10, padding: 12 }} source={require('../assets/minus.png')} /> */}
+                      <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#000' }}>-</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <Text>{changeNumber}</Text>
+                  <View
+                    style={{
+                      borderRadius: 100,
+                      marginLeft: 20,
+                      padding: 4,
+                      borderWidth: 1,
+                      borderColor: COLORS.BACKGROUNDMEDIUM,
+                      opacity: 0.5,
+                    }}>
+                    <TouchableOpacity onPress={increment}>
+                      <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#000' }}>+</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <TouchableOpacity onPress={() => console.log('Remove')}>
+                  <Image
+                    style={{ width: 10, height: 10, padding: 12 }}
+                    source={require('../assets/eliminar.png')}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
         </View>
         <View>
-
-
           <View
             style={{
               paddingHorizontal: 16,
@@ -285,7 +220,7 @@ const MyCart = ({ navigation }) => {
                 letterSpacing: 1,
                 marginBottom: 20,
               }}>
-              Orden Info
+              Orden Info 
             </Text>
 
             <View
@@ -302,7 +237,7 @@ const MyCart = ({ navigation }) => {
                   color: COLORS.BLACK,
                   opacity: 0.5,
                 }}>
-                Total  ${total}
+                Total ${changeNumber * productId.price}
               </Text>
               {/*  <Text
                 style={{
@@ -327,7 +262,7 @@ const MyCart = ({ navigation }) => {
           alignItems: 'center',
         }}>
         <TouchableOpacity
-          onPress={() => (total != 0 ? checkOut() : null)}
+          onPress={() => (productId.price != 0 ? checkOut() : null)}
           style={{
             width: '86%',
             height: '90%',
@@ -344,7 +279,7 @@ const MyCart = ({ navigation }) => {
               color: COLORS.WHITE,
               textTransform: 'uppercase',
             }}>
-            Total a Pagar ${total}
+            Total a Pagar ${changeNumber * productId.price}
           </Text>
         </TouchableOpacity>
       </View>

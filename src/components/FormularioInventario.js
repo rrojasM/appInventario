@@ -1,47 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, SafeAreaView, StyleSheet, Pressable, Keyboard, TouchableOpacity, TouchableHighlight, TouchableWithoutFeedback, ScrollView } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import uuid from 'react-uuid';
 import { COLORS } from '../data/Index';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-//handleInventario, setInventario, inventario
 const FormularioInventario = ({ setModal, navigation }) => {
 
-    /*     const [productName, setProductName] = useState('');
-        const [price, setPrice] = useState();
-        const [description, setDescription] = useState('');
-        const [isAvailable, setIsAvailable] = useState(true);
-        const [productImage, setProductImage] = useState('');
-        const [stock, setStock] = useState(); 
-         const [saveProduct, setSaveProduct] = useState();
-        */
-    const [values, setValues] = useState({});
+    /* const [category, setCategory] = useState('product');
+    const [productName, setProductName] = useState('');
+    const [price, setPrice] = useState();
+    const [description, setDescription] = useState('');
+    const [available] = useState(true);
+    const [productImage, setProductImage] = useState('');
+    const [stock, setStock] = useState(0);
+    const [off] = useState(false); */
 
+    const [values, setValues] = useState({});
 
     const onChange = (value, key) => {
         setValues((val) => ({ ...val, [key]: value }));
     }
 
-    const saveData = () => {
-        const data = {
-            ...values,
-            id: values.id = uuid()
-        }
 
-        console.log('VALUES FORM =====>', values);
-        storeData(data);
-        setValues({});
-        setModal(false);
-    }
 
-    const storeData = async (value) => {
+
+    const saveData = async () => {
         try {
-            const jsonValue = JSON.stringify(value);
-            console.log('STORE DATA INVENTARY =====>: ', jsonValue);
-            await AsyncStorage.setItem('newData', jsonValue);
-        } catch (e) {
-            // saving error
-            console.log('Error', e);
+            await fetch('https://b1b6-2806-262-401-9631-7085-b7eb-af28-f022.ngrok.io/api/inventario', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "category": "product",
+                    "productName": values.productName,
+                    "price": parseFloat(values.price),
+                    "description": values.description,
+                    "off": true,
+                    "available": true,
+                    "productImage": values.productImage,
+                    "stock": Number(values.stock)
+                })
+            }).then((response) => response.json())
+                .then((responseData) => {
+                    console.log('responseData', responseData);
+                    alert('Producto Agregado Correctamente');
+                    setValues({});
+                    setModal(false);
+                    navigation.navigate("Home");
+                })
+        } catch (error) {
+            console.log(error);
         }
     }
 
